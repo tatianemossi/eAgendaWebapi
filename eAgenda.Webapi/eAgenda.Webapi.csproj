@@ -8,4 +8,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\eAgenda.Aplicacao\eAgenda.Aplicacao.csproj" />
+    <ProjectReference Include="..\eAgenda.Dominio\eAgenda.Dominio.csproj" />
+    <ProjectReference Include="..\eAgenda.Infra.Orm\eAgenda.Infra.Orm.csproj" />
+  </ItemGroup>
+
 </Project>

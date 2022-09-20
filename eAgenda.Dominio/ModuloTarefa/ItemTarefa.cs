@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Taikandi;
 
 namespace eAgenda.Dominio.ModuloTarefa
@@ -28,6 +29,7 @@ namespace eAgenda.Dominio.ModuloTarefa
 
         public bool Concluido { get; set; }
 
+        [JsonIgnore]
         public Tarefa Tarefa { get; set; }
 
         public Guid TarefaId { get; set; }
