@@ -3,8 +3,6 @@ using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
 using eAgenda.Infra.Orm.ModuloTarefa;
-using FluentResults;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
