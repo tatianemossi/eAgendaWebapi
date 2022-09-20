@@ -6,6 +6,7 @@ using eAgenda.Infra.Orm;
 using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Dominio.ModuloContato;
+using eAgenda.Webapi.ViewModels.ModuloContato;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -25,52 +26,92 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpGet]
-        public List<Contato> SelecionarTodos()
+        public List<ListarContatosViewModel> SelecionarTodos()
         {
             var contatoResult = servicoContato.SelecionarTodos();
 
             if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+            {
+                var contatosGravados = contatoResult.Value;
+
+                var listagemContatos = new List<ListarContatosViewModel>();
+
+                foreach (var item in contatosGravados)
+                {
+                    var contatoVM = new ListarContatosViewModel
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Telefone = item.Telefone,
+                        Empresa = item.Empresa
+                    };
+
+                    listagemContatos.Add(contatoVM);
+                }
+
+                return listagemContatos;
+            }
 
             return null;
         }
 
-        [HttpGet("{id:guid}")]
-        public Contato SelecionarPorId(Guid id)
+        [HttpGet("visualizar-completo/{id:guid}")]
+        public VisualizarContatoViewModel SelecionarPorId(Guid id)
         {
             var contatoResult = servicoContato.SelecionarPorId(id);
 
             if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+            {
+                var contatoVM = new VisualizarContatoViewModel();
+
+                var contato = contatoResult.Value;
+
+                contatoVM.Nome = contato.Nome;
+                contatoVM.Email = contato.Email;
+                contatoVM.Telefone = contato.Telefone;
+                contatoVM.Empresa = contato.Empresa;
+                contatoVM.Cargo = contato.Cargo;
+
+                return contatoVM;
+            }
 
             return null;
         }
 
         [HttpPost]
-        public Contato Inserir(Contato novoContato) 
+        public FormsContatoViewModel Inserir(FormsContatoViewModel contatoVM)
         {
-            var contatoResult = servicoContato.Inserir(novoContato);
+            var contato = new Contato();
+
+            contato.Nome = contatoVM.Nome;
+            contato.Email = contatoVM.Email;
+            contato.Telefone = contatoVM.Telefone;
+            contato.Empresa = contatoVM.Empresa;
+            contato.Cargo = contatoVM.Cargo;
+
+            var contatoResult = servicoContato.Inserir(contato);
 
             if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+                return contatoVM;
 
             return null;
         }
 
         [HttpPut("{id:guid}")]
-        public Contato Editar(Guid id, Contato contato)
+        public FormsContatoViewModel Editar(Guid id, FormsContatoViewModel contatoVM)
         {
             var contatoEditado = servicoContato.SelecionarPorId(id).Value;
-            contatoEditado.Nome = contato.Nome;
-            contatoEditado.Email = contato.Email;
-            contatoEditado.Telefone = contato.Telefone;
-            contatoEditado.Empresa = contato.Empresa;
-            contatoEditado.Cargo = contato.Cargo;
+
+            contatoEditado.Nome = contatoVM.Nome;
+            contatoEditado.Email = contatoVM.Email;
+            contatoEditado.Telefone = contatoVM.Telefone;
+            contatoEditado.Empresa = contatoVM.Empresa;
+            contatoEditado.Cargo = contatoVM.Cargo;
 
             var contatoResult = servicoContato.Editar(contatoEditado);
 
             if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+                return contatoVM;
 
             return null;
         }

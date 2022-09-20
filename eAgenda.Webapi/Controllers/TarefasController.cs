@@ -4,7 +4,7 @@ using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
 using eAgenda.Infra.Orm.ModuloTarefa;
-using eAgenda.Webapi.ViewModels;
+using eAgenda.Webapi.ViewModels.ModuloTarefa;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -110,9 +110,7 @@ namespace eAgenda.Webapi.Controllers
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 
             if (tarefaResult.IsSuccess)
-            {
                 return tarefaVM;
-            }
 
             return null;
         }
