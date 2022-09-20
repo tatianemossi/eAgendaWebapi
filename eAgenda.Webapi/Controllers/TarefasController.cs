@@ -118,16 +118,37 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public Tarefa Editar(Guid id, Tarefa tarefa)
+        public FormsTarefasViewModel Editar(Guid id, FormsTarefasViewModel tarefaVM)
         {
             var tarefaEditada = servicoTarefa.SelecionarPorId(id).Value;
-            tarefaEditada.Titulo = tarefa.Titulo;
-            tarefaEditada.Prioridade = tarefa.Prioridade;
+
+            tarefaEditada.Titulo = tarefaVM.Titulo;
+            tarefaEditada.Prioridade = tarefaVM.Prioridade;
+
+            foreach (var itemVM in tarefaVM.Itens)
+            {
+                if (itemVM.Concluido)
+                    tarefaEditada.ConcluirItem(itemVM.Id);
+                else
+                    tarefaEditada.MarcarPendente(itemVM.Id);
+            }
+
+            foreach (var itemVM in tarefaVM.Itens)
+            {
+                if (itemVM.Status == StatusItemTarefa.Adicionado)
+                {
+                    var item = new ItemTarefa(itemVM.Titulo);
+                    tarefaEditada.AdicionarItem(item);
+                }
+                else if (itemVM.Status == StatusItemTarefa.Removido)
+                    tarefaEditada.RemoverItem(itemVM.Id);
+
+            }
 
             var tarefaResult = servicoTarefa.Editar(tarefaEditada);
 
             if (tarefaResult.IsSuccess)
-                return tarefaResult.Value;
+                return tarefaVM;
 
             return null;
         }
