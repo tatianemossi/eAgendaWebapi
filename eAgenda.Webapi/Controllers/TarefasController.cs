@@ -5,6 +5,7 @@ using eAgenda.Webapi.ViewModels.ModuloTarefa;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -22,29 +23,58 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpGet]
-        public List<ListarTarefasViewModel> SelecionarTodos()
+        public ActionResult<List<ListarTarefasViewModel>> SelecionarTodos()
         {
             var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
 
-            if (tarefaResult.IsSuccess)
-                return mapeadorTarefas.Map<List<ListarTarefasViewModel>>(tarefaResult.Value);
+            if (tarefaResult.IsFailed)
+            {
+                return StatusCode(500, new
+                {
+                    sucesso = false,
+                    erros = tarefaResult.Errors.Select(x => x.Message)
+                });
+            }
 
-            return null;
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<List<ListarTarefasViewModel>>(tarefaResult.Value)
+            });
         }
 
         [HttpGet("visualizar-completa/{id:guid}")]
-        public VisualizarTarefaViewModel SelecionarTarefaCompletaPorId(Guid id)
+        public ActionResult<VisualizarTarefaViewModel> SelecionarTarefaCompletaPorId(Guid id)
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaResult.IsSuccess)
-                return mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value);
+            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
+            {
+                return NotFound(new
+                {
+                    sucesso = false,
+                    erros = tarefaResult.Errors.Select(x => x.Message)
+                });
+            }
 
-            return null;
+            if (tarefaResult.IsFailed)
+            {
+                return StatusCode(500, new
+                {
+                    sucesso = false,
+                    erros = tarefaResult.Errors.Select(x => x.Message)
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
+            });
         }
 
         [HttpPost]
-        public FormsTarefasViewModel Inserir(InserirTarefaViewModel tarefaVM) 
+        public FormsTarefasViewModel Inserir(InserirTarefaViewModel tarefaVM)
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
