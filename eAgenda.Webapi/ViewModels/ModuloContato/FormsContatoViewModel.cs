@@ -1,4 +1,6 @@
-﻿namespace eAgenda.Webapi.ViewModels.ModuloContato
+﻿using eAgenda.Webapi.ViewModels.ModuloTarefa;
+
+namespace eAgenda.Webapi.ViewModels.ModuloContato
 {
     public class FormsContatoViewModel
     {
@@ -7,5 +9,15 @@
         public string Telefone { get; set; }
         public string Empresa { get; set; }
         public string Cargo { get; set; }
+    }
+
+    public class InserirContatoViewModel : FormsContatoViewModel
+    {
+
+    }
+
+    public class EditarContatoViewModel : FormsContatoViewModel
+    {
+
     }
 }

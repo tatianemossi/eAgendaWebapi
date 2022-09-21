@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.Infra.Configs;
-using eAgenda.Infra.Orm;
-using eAgenda.Infra.Orm.ModuloTarefa;
-using eAgenda.Webapi.Config.AutoMapperConfig;
 using eAgenda.Webapi.ViewModels.ModuloTarefa;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,22 +13,12 @@ namespace eAgenda.Webapi.Controllers
     public class TarefasController : ControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
-        private IMapper mapeadorTarefas;
+        private readonly IMapper mapeadorTarefas;
 
-        public TarefasController()
+        public TarefasController(ServicoTarefa servicoTarefa, IMapper mapeadorTarefas)
         {
-            var config = new ConfiguracaoAplicacaoeAgenda();
-
-            var eAgendaDbContext = new eAgendaDbContext(config.ConnectionStrings);
-            var repositorioTarefa = new RepositorioTarefaOrm(eAgendaDbContext);
-            servicoTarefa = new ServicoTarefa(repositorioTarefa, eAgendaDbContext);
-
-            var autoMapperConfig = new MapperConfiguration(config =>
-            {
-                config.AddProfile<TarefaProfile>();                
-            });
-
-            mapeadorTarefas = autoMapperConfig.CreateMapper();
+            this.servicoTarefa = servicoTarefa;
+            this.mapeadorTarefas = mapeadorTarefas;
         }
 
         [HttpGet]
@@ -47,7 +33,7 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpGet("visualizar-completa/{id:guid}")]
-        public VisualizarTarefaViewModel SelecionarTarefaCompletaPorId(Guid id) //4AD3BC00-9546-4013-EAB7-08DA9A6BD2BC
+        public VisualizarTarefaViewModel SelecionarTarefaCompletaPorId(Guid id)
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
@@ -58,7 +44,7 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpPost]
-        public FormsTarefasViewModel Inserir(InserirTarefaViewModel tarefaVM) //databinding - modelbinder
+        public FormsTarefasViewModel Inserir(InserirTarefaViewModel tarefaVM) 
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
