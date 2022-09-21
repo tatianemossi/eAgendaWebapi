@@ -11,4 +11,14 @@ namespace eAgenda.Webapi.ViewModels.ModuloTarefa
 
         public List<FormsItemTarefaViewModel> Itens { get; set; }
     }
+
+    public class InserirTarefaViewModel : FormsTarefasViewModel
+    {
+
+    }
+
+    public class EditarTarefaViewModel : FormsTarefasViewModel
+    {
+
+    }
 }
