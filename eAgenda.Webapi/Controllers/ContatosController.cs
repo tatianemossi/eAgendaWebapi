@@ -5,6 +5,9 @@ using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Webapi.ViewModels.ModuloContato;
 using AutoMapper;
+using FluentResults;
+using System.Net;
+using System.Linq;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -22,59 +25,114 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpGet]
-        public List<ListarContatosViewModel> SelecionarTodos()
+        public ActionResult<List<ListarContatosViewModel>> SelecionarTodos()
         {
             var contatoResult = servicoContato.SelecionarTodos();
 
-            if (contatoResult.IsSuccess)
-                return mapeadorContatos.Map<List<ListarContatosViewModel>>(contatoResult.Value);
+            if (contatoResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
-            return null;
+            return RetornarOkComMap<List<Contato>, List<ListarContatosViewModel>>(contatoResult);
         }
 
         [HttpGet("visualizar-completo/{id:guid}")]
-        public VisualizarContatoViewModel SelecionarPorId(Guid id)
+        public ActionResult<VisualizarContatoViewModel> SelecionarPorId(Guid id)
         {
             var contatoResult = servicoContato.SelecionarPorId(id);
 
-            if (contatoResult.IsSuccess)
-                return mapeadorContatos.Map<VisualizarContatoViewModel>(contatoResult.Value);
+            if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
+                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
 
-            return null;
+            if (contatoResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+
+            return RetornarOkComMap<Contato, VisualizarContatoViewModel>(contatoResult);
         }
 
         [HttpPost]
-        public FormsContatoViewModel Inserir(InserirContatoViewModel contatoVM)
+        public ActionResult<FormsContatoViewModel> Inserir(InserirContatoViewModel contatoVM)
         {
+            var listaErros = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage);
+
+            if (listaErros.Any())
+                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
+
             var contato = mapeadorContatos.Map<Contato>(contatoVM);
 
             var contatoResult = servicoContato.Inserir(contato);
 
-            if (contatoResult.IsSuccess)
-                return contatoVM;
+            if (contatoResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
-            return null;
+            return RetornarOkSemMap<InserirContatoViewModel>(contatoVM);
         }
 
         [HttpPut("{id:guid}")]
-        public FormsContatoViewModel Editar(Guid id, EditarContatoViewModel contatoVM)
+        public ActionResult<FormsContatoViewModel> Editar(Guid id, EditarContatoViewModel contatoVM)
         {
-            var contatoSelecionado = servicoContato.SelecionarPorId(id).Value;
+            var listaErros = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage);
 
-            var contato = mapeadorContatos.Map(contatoVM, contatoSelecionado);
+            if (listaErros.Any())
+                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
 
-            var contatoResult = servicoContato.Editar(contato);
+            var contatoResult = servicoContato.SelecionarPorId(id);
 
-            if (contatoResult.IsSuccess)
-                return contatoVM;
+            if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
+                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
 
-            return null;
+            var contato = mapeadorContatos.Map(contatoVM, contatoResult.Value);
+
+            contatoResult = servicoContato.Editar(contato);
+
+            if (contatoResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+
+            return RetornarOkSemMap<EditarContatoViewModel>(contatoVM);
         }
 
         [HttpDelete("{id:guid}")]
-        public void Excluir(Guid id)
+        public ActionResult Excluir(Guid id)
         {
-            servicoContato.Excluir(id);
+            var contatoResult = servicoContato.Excluir(id);
+
+            if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
+                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
+
+            if (contatoResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+
+            return NoContent();
+        }
+
+        private ActionResult RetornaErro(HttpStatusCode statusCode, IEnumerable<string> erros)
+        {
+            return StatusCode((int)statusCode, new
+            {
+                sucesso = false,
+                erros = erros
+            });
+        }
+
+        public ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> contatoResult)
+        {
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<TOutput>(contatoResult.Value)
+            });
+        }
+
+        public ActionResult RetornarOkSemMap<T>(Result<T> contatoResult)
+        {
+            return Ok(new
+            {
+                sucesso = true,
+                dados = contatoResult
+            });
         }
     }
 }
