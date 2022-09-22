@@ -2,10 +2,12 @@
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Webapi.ViewModels.ModuloTarefa;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -28,19 +30,9 @@ namespace eAgenda.Webapi.Controllers
             var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
 
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    erros = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
 
-            return Ok(new
-            {
-                sucesso = true,
-                dados = mapeadorTarefas.Map<List<ListarTarefasViewModel>>(tarefaResult.Value)
-            });
+            return RetornarOkComMap<List<Tarefa>, List<ListarTarefasViewModel>>(tarefaResult);
         }
 
         [HttpGet("visualizar-completa/{id:guid}")]
@@ -49,62 +41,98 @@ namespace eAgenda.Webapi.Controllers
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
             if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-            {
-                return NotFound(new
-                {
-                    sucesso = false,
-                    erros = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
 
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    erros = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
 
-            return Ok(new
-            {
-                sucesso = true,
-                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
-            });
+            return RetornarOkComMap<Tarefa, VisualizarTarefaViewModel>(tarefaResult);
         }
 
         [HttpPost]
-        public FormsTarefasViewModel Inserir(InserirTarefaViewModel tarefaVM)
+        public ActionResult<FormsTarefasViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
+            var listaErros = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage);
+
+            if (listaErros.Any())
+                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
+
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 
-            if (tarefaResult.IsSuccess)
-                return tarefaVM;
+            if (tarefaResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
 
-            return null;
+            return RetornarOkSemMap<InserirTarefaViewModel>(tarefaVM);
         }
 
         [HttpPut("{id:guid}")]
-        public FormsTarefasViewModel Editar(Guid id, EditarTarefaViewModel tarefaVM)
+        public ActionResult<FormsTarefasViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
-            var tarefaSelecionada = servicoTarefa.SelecionarPorId(id).Value;
+            var listaErros = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage);
 
-            var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaSelecionada);
+            if (listaErros.Any())
+                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
 
-            var tarefaResult = servicoTarefa.Editar(tarefa);
+            var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaResult.IsSuccess)
-                return tarefaVM;
+            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
+                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
 
-            return null;
+            var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaResult.Value);
+
+            tarefaResult = servicoTarefa.Editar(tarefa);
+
+            if (tarefaResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+
+            return RetornarOkSemMap<EditarTarefaViewModel>(tarefaVM);
         }
 
         [HttpDelete("{id:guid}")]
-        public void Excluir(Guid id)
+        public ActionResult Excluir(Guid id)
         {
-            servicoTarefa.Excluir(id);
+            var tarefaResult = servicoTarefa.Excluir(id);
+
+            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
+                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
+
+            if (tarefaResult.IsFailed)
+                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+
+            return NoContent();
+        }
+
+        private ActionResult RetornaErro(HttpStatusCode statusCode, IEnumerable<string> erros)
+        {
+            return StatusCode((int)statusCode, new
+            {
+                sucesso = false,
+                erros = erros
+            });
+        }
+
+        public ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> tarefaResult)
+        {
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<TOutput>(tarefaResult.Value)
+            });
+        }
+
+        public ActionResult RetornarOkSemMap<T>(Result<T> tarefaResult)
+        {
+            return Ok(new
+            {
+                sucesso = true,
+                dados = tarefaResult
+            });
         }
     }
 }

@@ -14,6 +14,7 @@ using eAgenda.Webapi.Config.AutoMapperConfig;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Aplicacao.ModuloContato;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.Webapi
 {
@@ -29,6 +30,11 @@ namespace eAgenda.Webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ApiBehaviorOptions>(config =>
+            {
+                config.SuppressModelStateInvalidFilter = true;
+            });
+
             services.AddAutoMapper(config =>
             {
                 config.AddProfile<TarefaProfile>();
