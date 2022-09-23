@@ -15,6 +15,7 @@ using eAgenda.Dominio.ModuloContato;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Aplicacao.ModuloContato;
 using Microsoft.AspNetCore.Mvc;
+using eAgenda.Webapi.Filters;
 
 namespace eAgenda.Webapi
 {
@@ -50,7 +51,11 @@ namespace eAgenda.Webapi
             services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
             services.AddTransient<ServicoContato>();
 
-            services.AddControllers();
+            services.AddControllers(config =>
+            {
+                config.Filters.Add(new ValidarViewModelActionFilter());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eAgenda.Webapi", Version = "v1" });

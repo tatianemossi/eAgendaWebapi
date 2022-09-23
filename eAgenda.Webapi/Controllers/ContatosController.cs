@@ -30,7 +30,7 @@ namespace eAgenda.Webapi.Controllers
             var contatoResult = servicoContato.SelecionarTodos();
 
             if (contatoResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
             return RetornarOkComMap<List<Contato>, List<ListarContatosViewModel>>(contatoResult);
         }
@@ -41,10 +41,10 @@ namespace eAgenda.Webapi.Controllers
             var contatoResult = servicoContato.SelecionarPorId(id);
 
             if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
-                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
 
             if (contatoResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
             return RetornarOkComMap<Contato, VisualizarContatoViewModel>(contatoResult);
         }
@@ -57,14 +57,14 @@ namespace eAgenda.Webapi.Controllers
                 .Select(x => x.ErrorMessage);
 
             if (listaErros.Any())
-                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
+                return RetornarErro(HttpStatusCode.BadRequest, listaErros);
 
             var contato = mapeadorContatos.Map<Contato>(contatoVM);
 
             var contatoResult = servicoContato.Inserir(contato);
 
             if (contatoResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
             return RetornarOkSemMap<InserirContatoViewModel>(contatoVM);
         }
@@ -77,19 +77,19 @@ namespace eAgenda.Webapi.Controllers
                 .Select(x => x.ErrorMessage);
 
             if (listaErros.Any())
-                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
+                return RetornarErro(HttpStatusCode.BadRequest, listaErros);
 
             var contatoResult = servicoContato.SelecionarPorId(id);
 
             if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
-                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
 
             var contato = mapeadorContatos.Map(contatoVM, contatoResult.Value);
 
             contatoResult = servicoContato.Editar(contato);
 
             if (contatoResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
             return RetornarOkSemMap<EditarContatoViewModel>(contatoVM);
         }
@@ -100,15 +100,15 @@ namespace eAgenda.Webapi.Controllers
             var contatoResult = servicoContato.Excluir(id);
 
             if (contatoResult.Errors.Any(x => x.Message.Contains("não encontrado")))
-                return RetornaErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.NotFound, contatoResult.Errors.Select(x => x.Message));
 
             if (contatoResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
+                return RetornarErro(HttpStatusCode.InternalServerError, contatoResult.Errors.Select(x => x.Message));
 
             return NoContent();
         }
 
-        private ActionResult RetornaErro(HttpStatusCode statusCode, IEnumerable<string> erros)
+        private ActionResult RetornarErro(HttpStatusCode statusCode, IEnumerable<string> erros)
         {
             return StatusCode((int)statusCode, new
             {

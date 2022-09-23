@@ -7,13 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TarefasController : ControllerBase
+    public class TarefasController : eAgendaControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
         private readonly IMapper mapeadorTarefas;
@@ -30,7 +29,7 @@ namespace eAgenda.Webapi.Controllers
             var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
 
             if (tarefaResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+                return InternalError(tarefaResult);
 
             return RetornarOkComMap<List<Tarefa>, List<ListarTarefasViewModel>>(tarefaResult);
         }
@@ -40,11 +39,11 @@ namespace eAgenda.Webapi.Controllers
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
+                return NotFound(tarefaResult);
 
             if (tarefaResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+                return InternalError(tarefaResult);
 
             return RetornarOkComMap<Tarefa, VisualizarTarefaViewModel>(tarefaResult);
         }
@@ -52,19 +51,12 @@ namespace eAgenda.Webapi.Controllers
         [HttpPost]
         public ActionResult<FormsTarefasViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
-            var listaErros = ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(x => x.ErrorMessage);
-
-            if (listaErros.Any())
-                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
-
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 
             if (tarefaResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+                return InternalError(tarefaResult);
 
             return RetornarOkSemMap<InserirTarefaViewModel>(tarefaVM);
         }
@@ -72,24 +64,18 @@ namespace eAgenda.Webapi.Controllers
         [HttpPut("{id:guid}")]
         public ActionResult<FormsTarefasViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
-            var listaErros = ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(x => x.ErrorMessage);
-
-            if (listaErros.Any())
-                return RetornaErro(HttpStatusCode.BadRequest, listaErros);
 
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
+                return NotFound(tarefaResult);
 
             var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaResult.Value);
 
             tarefaResult = servicoTarefa.Editar(tarefa);
 
             if (tarefaResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+                return InternalError(tarefaResult);
 
             return RetornarOkSemMap<EditarTarefaViewModel>(tarefaVM);
         }
@@ -99,25 +85,18 @@ namespace eAgenda.Webapi.Controllers
         {
             var tarefaResult = servicoTarefa.Excluir(id);
 
-            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-                return RetornaErro(HttpStatusCode.NotFound, tarefaResult.Errors.Select(x => x.Message));
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado<Tarefa>(tarefaResult))
+                return NotFound(tarefaResult);
 
             if (tarefaResult.IsFailed)
-                return RetornaErro(HttpStatusCode.InternalServerError, tarefaResult.Errors.Select(x => x.Message));
+                return InternalError<Tarefa>(tarefaResult);
 
             return NoContent();
         }
 
-        private ActionResult RetornaErro(HttpStatusCode statusCode, IEnumerable<string> erros)
-        {
-            return StatusCode((int)statusCode, new
-            {
-                sucesso = false,
-                erros = erros
-            });
-        }
 
-        public ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> tarefaResult)
+        #region Métodos Privados
+        private ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> tarefaResult)
         {
             return Ok(new
             {
@@ -126,7 +105,7 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
-        public ActionResult RetornarOkSemMap<T>(Result<T> tarefaResult)
+        private ActionResult RetornarOkSemMap<T>(Result<T> tarefaResult)
         {
             return Ok(new
             {
@@ -134,5 +113,7 @@ namespace eAgenda.Webapi.Controllers
                 dados = tarefaResult
             });
         }
+
+        #endregion
     }
 }
