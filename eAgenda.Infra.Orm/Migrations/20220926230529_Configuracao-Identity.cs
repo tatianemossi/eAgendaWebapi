@@ -153,6 +153,163 @@ namespace eAgenda.Infra.Orm.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TBCategoria",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "varchar(200)", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBCategoria", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBCategoria_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBContato",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Nome = table.Column<string>(type: "varchar(200)", nullable: false),
+                    Email = table.Column<string>(type: "varchar(200)", nullable: true),
+                    Telefone = table.Column<string>(type: "varchar(20)", nullable: true),
+                    Empresa = table.Column<string>(type: "varchar(200)", nullable: true),
+                    Cargo = table.Column<string>(type: "varchar(200)", nullable: true),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBContato", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBContato_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBDespesa",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Descricao = table.Column<string>(type: "varchar(200)", nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FormaPagamento = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBDespesa", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBDespesa_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBTarefa",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "varchar(200)", nullable: false),
+                    Prioridade = table.Column<int>(type: "int", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataConclusao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PercentualConcluido = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBTarefa", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBTarefa_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBCompromisso",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Assunto = table.Column<string>(type: "varchar(300)", nullable: false),
+                    Local = table.Column<string>(type: "varchar(300)", nullable: true),
+                    TipoLocal = table.Column<int>(type: "int", nullable: false),
+                    Link = table.Column<string>(type: "varchar(1000)", nullable: true),
+                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HoraInicio = table.Column<long>(type: "bigint", nullable: false),
+                    HoraTermino = table.Column<long>(type: "bigint", nullable: false),
+                    ContatoId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBCompromisso", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBCompromisso_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TBCompromisso_TBContato_ContatoId",
+                        column: x => x.ContatoId,
+                        principalTable: "TBContato",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBDespesa_TBCategoria",
+                columns: table => new
+                {
+                    CategoriasId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DespesasId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBDespesa_TBCategoria", x => new { x.CategoriasId, x.DespesasId });
+                    table.ForeignKey(
+                        name: "FK_TBDespesa_TBCategoria_TBCategoria_CategoriasId",
+                        column: x => x.CategoriasId,
+                        principalTable: "TBCategoria",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TBDespesa_TBCategoria_TBDespesa_DespesasId",
+                        column: x => x.DespesasId,
+                        principalTable: "TBDespesa",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TBItemTarefa",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "varchar(200)", nullable: false),
+                    Concluido = table.Column<bool>(type: "bit", nullable: false),
+                    TarefaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TBItemTarefa", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TBItemTarefa_TBTarefa_TarefaId",
+                        column: x => x.TarefaId,
+                        principalTable: "TBTarefa",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -191,6 +348,46 @@ namespace eAgenda.Infra.Orm.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBCategoria_UsuarioId",
+                table: "TBCategoria",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBCompromisso_ContatoId",
+                table: "TBCompromisso",
+                column: "ContatoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBCompromisso_UsuarioId",
+                table: "TBCompromisso",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBContato_UsuarioId",
+                table: "TBContato",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBDespesa_UsuarioId",
+                table: "TBDespesa",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBDespesa_TBCategoria_DespesasId",
+                table: "TBDespesa_TBCategoria",
+                column: "DespesasId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBItemTarefa_TarefaId",
+                table: "TBItemTarefa",
+                column: "TarefaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TBTarefa_UsuarioId",
+                table: "TBTarefa",
+                column: "UsuarioId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -211,7 +408,28 @@ namespace eAgenda.Infra.Orm.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "TBCompromisso");
+
+            migrationBuilder.DropTable(
+                name: "TBDespesa_TBCategoria");
+
+            migrationBuilder.DropTable(
+                name: "TBItemTarefa");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "TBContato");
+
+            migrationBuilder.DropTable(
+                name: "TBCategoria");
+
+            migrationBuilder.DropTable(
+                name: "TBDespesa");
+
+            migrationBuilder.DropTable(
+                name: "TBTarefa");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -10,8 +10,8 @@ using eAgenda.Infra.Orm;
 namespace eAgenda.Infra.Orm.Migrations
 {
     [DbContext(typeof(eAgendaDbContext))]
-    [Migration("20220926195328_Configuracao-usuarios")]
-    partial class Configuracaousuarios
+    [Migration("20220926230529_Configuracao-Identity")]
+    partial class ConfiguracaoIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -483,8 +483,7 @@ namespace eAgenda.Infra.Orm.Migrations
                     b.HasOne("eAgenda.Dominio.ModuloAutenticacao.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Contato");
 
@@ -496,8 +495,7 @@ namespace eAgenda.Infra.Orm.Migrations
                     b.HasOne("eAgenda.Dominio.ModuloAutenticacao.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Usuario");
                 });
@@ -507,8 +505,7 @@ namespace eAgenda.Infra.Orm.Migrations
                     b.HasOne("eAgenda.Dominio.ModuloAutenticacao.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Usuario");
                 });
@@ -518,8 +515,7 @@ namespace eAgenda.Infra.Orm.Migrations
                     b.HasOne("eAgenda.Dominio.ModuloAutenticacao.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Usuario");
                 });
@@ -540,8 +536,7 @@ namespace eAgenda.Infra.Orm.Migrations
                     b.HasOne("eAgenda.Dominio.ModuloAutenticacao.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Usuario");
                 });
