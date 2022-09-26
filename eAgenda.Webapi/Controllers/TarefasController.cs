@@ -6,7 +6,6 @@ using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -64,7 +63,6 @@ namespace eAgenda.Webapi.Controllers
         [HttpPut("{id:guid}")]
         public ActionResult<FormsTarefasViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
-
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
             if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
