@@ -11,10 +11,12 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
     public class ServicoAutenticacao : ServicoBase<Usuario, ValidadorUsuario>
     {
         private readonly UserManager<Usuario> userManager;
+        private readonly SignInManager<Usuario> signInManager;
 
-        public ServicoAutenticacao(UserManager<Usuario> userManager)
+        public ServicoAutenticacao(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         public async Task<Result<Usuario>> RegistrarUsuario(Usuario usuario, string senha)
@@ -33,7 +35,7 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
                 {
                     var erros = usuarioResult.Errors
                         .Select(identityErro => new Error(identityErro.Description));
-                     
+
                     return Result.Fail(erros);
                 }
 
@@ -50,6 +52,39 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
             }
 
             return Result.Ok(usuario);
+        }
+
+        public async Task<Result<Usuario>> AutenticarUsuario(string email, string senha)
+        {
+            Log.Logger.Debug("Tentando autenticar usuário... {@u}", email);
+
+            var loginResult = await signInManager.PasswordSignInAsync(email, senha, false, true);
+
+            if (loginResult.Succeeded == false && loginResult.IsLockedOut)
+            {
+                string msgErro = "Usuário bloqueado";
+                Log.Logger.Warning(msgErro + " {UsuarioEmail}", email);
+                return Result.Fail(msgErro);
+            }
+
+            if (loginResult.Succeeded == false)
+            {
+                string msgErro = "Usuário ou senha incorretos";
+                Log.Logger.Warning(msgErro + " {UsuarioEmail}", email);
+                return Result.Fail(msgErro);
+            }
+            var usuario = await userManager.FindByEmailAsync(email);
+
+            return Result.Ok(usuario);
+        }
+
+        public async Task<Result<Usuario>> Sair(string email)
+        {
+            await signInManager.SignOutAsync();
+
+            Log.Logger.Debug("Sessão do usuário {@email} removida...", email);
+
+            return Result.Ok();
         }
     }
 }

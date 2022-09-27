@@ -3,14 +3,17 @@ using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Webapi.ViewModels.ModuloTarefa;
 using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TarefasController : eAgendaControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
@@ -25,7 +28,7 @@ namespace eAgenda.Webapi.Controllers
         [HttpGet]
         public ActionResult<List<ListarTarefasViewModel>> SelecionarTodos()
         {
-            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
+            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos,UsuarioLogado.Id);
 
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
@@ -51,6 +54,8 @@ namespace eAgenda.Webapi.Controllers
         public ActionResult<FormsTarefasViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
+            
+            tarefa.UsuarioId = UsuarioLogado.Id;
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 

@@ -6,11 +6,13 @@ using eAgenda.Dominio.ModuloContato;
 using eAgenda.Webapi.ViewModels.ModuloContato;
 using AutoMapper;
 using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ContatosController : eAgendaControllerBase
     {
         private readonly ServicoContato servicoContato;

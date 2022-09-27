@@ -20,6 +20,9 @@ using eAgenda.Aplicacao.ModuloAutenticacao;
 using Microsoft.AspNetCore.Identity;
 using eAgenda.Dominio.ModuloAutenticacao;
 using System;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace eAgenda.Webapi
 {
@@ -55,6 +58,7 @@ namespace eAgenda.Webapi
                 .AddDefaultTokenProviders();
 
             services.AddTransient<UserManager<Usuario>>();
+            services.AddTransient<SignInManager<Usuario>>();
 
             services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
 
@@ -75,6 +79,26 @@ namespace eAgenda.Webapi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eAgenda.Webapi", Version = "v1" });
             });
+
+            var key = Encoding.ASCII.GetBytes("SegredoSuperSecretoDoeAgenda");
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidAudience = "http://localhost",
+                    ValidIssuer = "eAgenda"
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,6 +114,8 @@ namespace eAgenda.Webapi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
