@@ -16,6 +16,10 @@ using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Aplicacao.ModuloContato;
 using Microsoft.AspNetCore.Mvc;
 using eAgenda.Webapi.Filters;
+using eAgenda.Aplicacao.ModuloAutenticacao;
+using Microsoft.AspNetCore.Identity;
+using eAgenda.Dominio.ModuloAutenticacao;
+using System;
 
 namespace eAgenda.Webapi
 {
@@ -40,8 +44,17 @@ namespace eAgenda.Webapi
             {
                 config.AddProfile<TarefaProfile>();
                 config.AddProfile<ContatoProfile>();
+                config.AddProfile<UsuarioProfile>();
             });
             services.AddSingleton((x) => new ConfiguracaoAplicacaoeAgenda().ConnectionStrings);
+
+            services.AddScoped<eAgendaDbContext>();
+
+            services.AddIdentity<Usuario, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<eAgendaDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient<UserManager<Usuario>>();
 
             services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
 
@@ -50,6 +63,8 @@ namespace eAgenda.Webapi
 
             services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
             services.AddTransient<ServicoContato>();
+
+            services.AddTransient<ServicoAutenticacao>();
 
             services.AddControllers(config =>
             {

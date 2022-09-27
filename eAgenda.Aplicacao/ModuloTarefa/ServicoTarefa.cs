@@ -30,7 +30,6 @@ namespace eAgenda.Aplicacao.ModuloTarefa
 
             try
             {
-
                 repositorioTarefa.Inserir(tarefa);
 
                 contextoPersistencia.GravarDados();
