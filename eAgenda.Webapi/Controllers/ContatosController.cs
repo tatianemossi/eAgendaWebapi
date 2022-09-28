@@ -7,6 +7,7 @@ using eAgenda.Webapi.ViewModels.ModuloContato;
 using AutoMapper;
 using FluentResults;
 using Microsoft.AspNetCore.Authorization;
+using eAgenda.Dominio.ModuloAutenticacao;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -50,20 +51,22 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<FormsContatoViewModel> Inserir(InserirContatoViewModel contatoVM)
+        public ActionResult<FormsContatoViewModel> Inserir(FormsContatoViewModel contatoVM)
         {
             var contato = mapeadorContatos.Map<Contato>(contatoVM);
+
+            contato.UsuarioId = UsuarioLogado.Id;
 
             var contatoResult = servicoContato.Inserir(contato);
 
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkSemMap<InserirContatoViewModel>(contatoVM);
+            return RetornarOkSemMap<FormsContatoViewModel>(contatoVM);
         }
 
         [HttpPut("{id:guid}")]
-        public ActionResult<FormsContatoViewModel> Editar(Guid id, EditarContatoViewModel contatoVM)
+        public ActionResult<FormsContatoViewModel> Editar(Guid id, FormsContatoViewModel contatoVM)
         {
             var contatoResult = servicoContato.SelecionarPorId(id);
 
@@ -77,7 +80,7 @@ namespace eAgenda.Webapi.Controllers
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkSemMap<EditarContatoViewModel>(contatoVM);
+            return RetornarOkSemMap<FormsContatoViewModel>(contatoVM);
         }
 
         [HttpDelete("{id:guid}")]

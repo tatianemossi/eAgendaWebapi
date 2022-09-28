@@ -22,8 +22,7 @@ namespace eAgenda.Webapi.Controllers
 
                     var id = Request?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                    if (!string.IsNullOrEmpty(id))
-                        usuario.Id = Guid.Empty;
+                    usuario.Id = string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
 
                     var nome = Request?.HttpContext?.User?.FindFirst(ClaimTypes.GivenName)?.Value;
 
