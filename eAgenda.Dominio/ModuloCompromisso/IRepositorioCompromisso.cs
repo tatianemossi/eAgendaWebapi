@@ -9,5 +9,7 @@ namespace eAgenda.Dominio.ModuloCompromisso
         List<Compromisso> SelecionarCompromissosFuturos(DateTime dataInicial, DateTime dataFinal);
 
         List<Compromisso> SelecionarCompromissosPassados(DateTime dataDeHoje);
+        
+        List<Compromisso> SelecionarTodosPeloUsuarioId(Guid usuarioId);
     }
 }

@@ -81,6 +81,16 @@ namespace eAgenda.Aplicacao.ModuloCompromisso
             return Result.Ok(compromisso);
         }
 
+        public Result Excluir(Guid id)
+        {
+            var compromissoResult = SelecionarPorId(id);
+
+            if (compromissoResult.IsSuccess)
+                return Excluir(compromissoResult.Value);
+
+            return Result.Fail(compromissoResult.Errors);
+        }
+
         public Result Excluir(Compromisso compromisso)
         {
             Log.Logger.Debug("Tentando excluir compromisso... {@c}", compromisso);
@@ -102,6 +112,28 @@ namespace eAgenda.Aplicacao.ModuloCompromisso
                 string msgErro = "Falha no sistema ao tentar excluir o Compromisso";
 
                 Log.Logger.Error(ex, msgErro + " {CompromissoId}", compromisso.Id);
+
+                return Result.Fail(msgErro);
+            }
+        }
+
+        public Result<List<Compromisso>> SelecionarTodosPeloUsuarioId(Guid usuarioId)
+        {
+            Log.Logger.Debug("Tentando selecionar compromissos...");
+
+            try
+            {
+                var compromissos = repositorioCompromisso.SelecionarTodosPeloUsuarioId(usuarioId);
+
+                Log.Logger.Information("Compromissos selecionados com sucesso");
+
+                return Result.Ok(compromissos);
+            }
+            catch (Exception ex)
+            {
+                string msgErro = "Falha no sistema ao tentar selecionar todos os Compromissos";
+
+                Log.Logger.Error(ex, msgErro);
 
                 return Result.Fail(msgErro);
             }

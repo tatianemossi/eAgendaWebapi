@@ -42,7 +42,7 @@ namespace eAgenda.WinApp.ModuloCompromisso
 
                 txtAssunto.Text = compromisso.Assunto;
 
-                if (compromisso.TipoLocal == TipoLocalizacaoCompromissoEnum.Remoto)
+                if (compromisso.TipoLocal == TipoLocalCompromissoEnum.Remoto)
                 {
                     rdbRemoto.Checked = true;
                     txtLink.Text = compromisso.Link;
@@ -77,12 +77,12 @@ namespace eAgenda.WinApp.ModuloCompromisso
 
             if (rdbRemoto.Checked)
             {
-                compromisso.TipoLocal = TipoLocalizacaoCompromissoEnum.Remoto;
+                compromisso.TipoLocal = TipoLocalCompromissoEnum.Remoto;
                 compromisso.Link = txtLink.Text;
             }
             else
             {
-                compromisso.TipoLocal = TipoLocalizacaoCompromissoEnum.Presencial;
+                compromisso.TipoLocal = TipoLocalCompromissoEnum.Presencial;
                 compromisso.Local = txtLocal.Text;
             }
 

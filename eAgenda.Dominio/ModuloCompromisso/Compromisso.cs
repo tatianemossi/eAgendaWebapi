@@ -8,7 +8,7 @@ namespace eAgenda.Dominio.ModuloCompromisso
     public class Compromisso : EntidadeBase<Compromisso>
     {
         private DateTime _date;
-        private TipoLocalizacaoCompromissoEnum _compromissoEnum;
+        private TipoLocalCompromissoEnum _compromissoEnum;
         public Compromisso()
         {
             Data = DateTime.Now;
@@ -16,23 +16,11 @@ namespace eAgenda.Dominio.ModuloCompromisso
             HoraTermino = Data.TimeOfDay;
         }
 
-        public Compromisso(string assunto, string local, string link, DateTime data,
-             TimeSpan horaInicio, TimeSpan horaTermino, Contato contato)
-        {
-            Assunto = assunto;
-            Local = local;
-            Link = link;
-            Data = data;
-            HoraInicio = horaInicio;
-            HoraTermino = horaTermino;
-            Contato = contato;
-        }
-
         public string Assunto { get; set; }
 
         public string Local { get; set; }
 
-        public TipoLocalizacaoCompromissoEnum TipoLocal
+        public TipoLocalCompromissoEnum TipoLocal
         {
             get { return _compromissoEnum; }
             set
@@ -41,13 +29,18 @@ namespace eAgenda.Dominio.ModuloCompromisso
 
                 switch (_compromissoEnum)
                 {
-                    case TipoLocalizacaoCompromissoEnum.Presencial: Link = null; break;
-                    case TipoLocalizacaoCompromissoEnum.Remoto: Local = null; break;
+                    case TipoLocalCompromissoEnum.Presencial: Link = null; break;
+                    case TipoLocalCompromissoEnum.Remoto: Local = null; break;
 
                     default:
                         break;
                 }
             }
+        }
+
+        public Compromisso(TipoLocalCompromissoEnum tipoLocal)
+        {
+            TipoLocal = tipoLocal;
         }
 
         public string Link { get; set; }
@@ -57,6 +50,7 @@ namespace eAgenda.Dominio.ModuloCompromisso
         public TimeSpan HoraTermino { get; set; }
         public Contato Contato { get; set; }
         public Guid? ContatoId { get; set; }
+        
         public override void Atualizar(Compromisso registro)
         {
             Id = registro.Id;
@@ -81,11 +75,6 @@ namespace eAgenda.Dominio.ModuloCompromisso
                    HoraInicio.Equals(compromisso.HoraInicio) &&
                    HoraTermino.Equals(compromisso.HoraTermino) &&
                    EqualityComparer<Contato>.Default.Equals(Contato, compromisso.Contato);
-        }
-
-        public Compromisso Clonar()
-        {
-            return MemberwiseClone() as Compromisso;
         }
 
         public override int GetHashCode()
