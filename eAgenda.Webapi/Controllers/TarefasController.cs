@@ -2,12 +2,10 @@
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Webapi.ViewModels.ModuloTarefa;
-using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -28,12 +26,16 @@ namespace eAgenda.Webapi.Controllers
         [HttpGet]
         public ActionResult<List<ListarTarefasViewModel>> SelecionarTodos()
         {
-            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos,UsuarioLogado.Id);
+            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos, UsuarioLogado.Id);
 
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
 
-            return RetornarOkComMap<List<Tarefa>, List<ListarTarefasViewModel>>(tarefaResult);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<List<ListarTarefasViewModel>>(tarefaResult.Value)
+            });
         }
 
         [HttpGet("visualizar-completa/{id:guid}")]
@@ -47,7 +49,11 @@ namespace eAgenda.Webapi.Controllers
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
 
-            return RetornarOkComMap<Tarefa, VisualizarTarefaViewModel>(tarefaResult);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
+            });
         }
 
         [HttpPost]
@@ -62,7 +68,11 @@ namespace eAgenda.Webapi.Controllers
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
 
-            return RetornarOkSemMap<InserirTarefaViewModel>(tarefaVM);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = tarefaVM
+            });
         }
 
         [HttpPut("{id:guid}")]
@@ -80,7 +90,11 @@ namespace eAgenda.Webapi.Controllers
             if (tarefaResult.IsFailed)
                 return InternalError(tarefaResult);
 
-            return RetornarOkSemMap<EditarTarefaViewModel>(tarefaVM);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = tarefaVM
+            });
         }
 
         [HttpDelete("{id:guid}")]
@@ -96,27 +110,5 @@ namespace eAgenda.Webapi.Controllers
 
             return NoContent();
         }
-
-
-        #region Métodos Privados
-        private ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> tarefaResult)
-        {
-            return Ok(new
-            {
-                sucesso = true,
-                dados = mapeadorTarefas.Map<TOutput>(tarefaResult.Value)
-            });
-        }
-
-        private ActionResult RetornarOkSemMap<T>(Result<T> tarefaResult)
-        {
-            return Ok(new
-            {
-                sucesso = true,
-                dados = tarefaResult
-            });
-        }
-
-        #endregion
     }
 }
