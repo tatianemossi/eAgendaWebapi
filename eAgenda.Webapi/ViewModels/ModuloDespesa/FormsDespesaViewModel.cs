@@ -18,6 +18,8 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
         public DateTime Data { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
+        [EnumDataType(typeof(FormaPgtoDespesaEnum), 
+            ErrorMessage = "O número inserido não faz parte do Enum de Formas de Pagamento, digite um número entre 0 e 2")]
         public FormaPgtoDespesaEnum FormaPagamento { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
