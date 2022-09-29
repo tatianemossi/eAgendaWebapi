@@ -25,7 +25,6 @@ namespace eAgenda.Infra.Orm.ModuloTarefa
             builder.HasMany(x => x.Itens)
                 .WithOne(x => x.Tarefa)
                 .OnDelete(DeleteBehavior.Cascade);
-
         }
     }
 }

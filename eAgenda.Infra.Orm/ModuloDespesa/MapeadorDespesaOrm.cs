@@ -24,8 +24,7 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
             builder.HasMany(x => x.Categorias)
                 .WithMany(x => x.Despesas)
                 .UsingEntity(x =>
-                    x.ToTable("TBDespesa_TBCategoria")
-                );
+                    x.ToTable("TBDespesa_TBCategoria"));
         }
     }
 }

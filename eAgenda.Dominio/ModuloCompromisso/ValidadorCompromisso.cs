@@ -12,21 +12,13 @@ namespace eAgenda.Dominio.ModuloCompromisso
 
             When(x => x.TipoLocal == TipoLocalCompromissoEnum.Remoto, () =>
             {
-                RuleFor(x => x.Link)
-                    .Url()
-                   .NotNull()
-                   .NotEmpty();
-
+                RuleFor(x => x.Link).Url().NotNull().NotEmpty();
             });
-            
-            When(x => x.TipoLocal == TipoLocalCompromissoEnum.Presencial,() =>
+
+            When(x => x.TipoLocal == TipoLocalCompromissoEnum.Presencial, () =>
             {
-
-                RuleFor(x => x.Local)
-                    .NotNull()
-                    .NotEmpty();
+                RuleFor(x => x.Local).NotNull().NotEmpty();
             });
-
 
             RuleFor(x => x.Data)
                .NotNull().NotEmpty().GreaterThanOrEqualTo((x) => DateTime.Now.Date);

@@ -16,6 +16,5 @@ namespace eAgenda.Dominio.Compartilhado
         }
 
         public abstract void Atualizar(T registro);
-
     }
 }

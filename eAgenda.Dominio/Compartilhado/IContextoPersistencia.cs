@@ -1,4 +1,4 @@
-﻿namespace eAgenda.Dominio
+﻿namespace eAgenda.Dominio.Compartilhado
 {
     public interface IContextoPersistencia
     {

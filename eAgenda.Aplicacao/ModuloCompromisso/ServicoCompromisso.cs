@@ -1,4 +1,4 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloCompromisso;
 using FluentResults;
 using Serilog;

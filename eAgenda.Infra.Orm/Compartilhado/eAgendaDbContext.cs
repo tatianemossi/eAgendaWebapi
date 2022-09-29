@@ -1,4 +1,4 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloAutenticacao;
 using eAgenda.Infra.Configs;
 using Microsoft.AspNetCore.Identity;
@@ -29,8 +29,7 @@ namespace eAgenda.Infra.Orm
         public void DesfazerAlteracoes()
         {
             var registrosAlterados = ChangeTracker.Entries()
-                .Where(e => e.State != EntityState.Unchanged)
-                .ToList();
+                .Where(e => e.State != EntityState.Unchanged).ToList();
 
             foreach (var registro in registrosAlterados)
             {

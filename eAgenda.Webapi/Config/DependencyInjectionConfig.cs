@@ -3,7 +3,6 @@ using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.Dominio;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Infra.Orm.ModuloTarefa;
 using eAgenda.Infra.Orm;
@@ -15,6 +14,7 @@ using eAgenda.Aplicacao.ModuloCompromisso;
 using eAgenda.Dominio.ModuloDespesa;
 using eAgenda.Infra.Orm.ModuloDespesa;
 using eAgenda.Aplicacao.ModuloDespesa;
+using eAgenda.Dominio.Compartilhado;
 
 namespace eAgenda.Webapi.Config
 {

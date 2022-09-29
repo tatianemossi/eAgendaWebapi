@@ -3,8 +3,7 @@ using eAgenda.Aplicacao.ModuloCompromisso;
 using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Aplicacao.ModuloDespesa;
 using eAgenda.Aplicacao.ModuloTarefa;
-
-using eAgenda.Dominio;
+using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloCompromisso;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Dominio.ModuloDespesa;

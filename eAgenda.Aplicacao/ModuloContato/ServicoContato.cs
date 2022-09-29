@@ -1,4 +1,4 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloContato;
 using FluentResults;
 using Serilog;
@@ -167,7 +167,5 @@ namespace eAgenda.Aplicacao.ModuloContato
                 return Result.Fail(msgErro);
             }
         }
-
-
     }
 }

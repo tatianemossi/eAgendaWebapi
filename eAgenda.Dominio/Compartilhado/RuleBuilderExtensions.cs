@@ -25,11 +25,5 @@ namespace eAgenda.Dominio
 
             return options;
         }
-
-
     }
-
-
-
-
 }

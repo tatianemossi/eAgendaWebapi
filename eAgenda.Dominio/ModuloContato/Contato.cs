@@ -5,9 +5,7 @@ namespace eAgenda.Dominio.ModuloContato
 {
     public class Contato : EntidadeBase<Contato>
     {
-        public Contato()
-        {
-        }
+        public Contato(){}
 
         public Contato(string n, string e, string t, string emp, string c)
         {

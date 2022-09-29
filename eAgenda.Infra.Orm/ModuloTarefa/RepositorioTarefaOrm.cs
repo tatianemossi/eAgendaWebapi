@@ -1,4 +1,4 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloTarefa;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,9 +35,7 @@ namespace eAgenda.Infra.Orm.ModuloTarefa
 
         public Tarefa SelecionarPorId(Guid id)
         {
-            return tarefas
-                .Include(x => x.Itens)
-                .SingleOrDefault(x => x.Id == id);
+            return tarefas.Include(x => x.Itens).SingleOrDefault(x => x.Id == id);
         }
 
         public List<Tarefa> SelecionarTodos()
@@ -59,8 +57,7 @@ namespace eAgenda.Infra.Orm.ModuloTarefa
 
             else
                 return tarefas
-                    .Where(x => x.UsuarioId.Equals(usuarioId))
-                    .ToList();
+                    .Where(x => x.UsuarioId.Equals(usuarioId)).ToList();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using eAgenda.Dominio;
-using eAgenda.Dominio.ModuloCompromisso;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloDespesa;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -46,9 +45,7 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
 
         public Despesa SelecionarPorId(Guid id)
         {
-            return despesas
-                .Include(x => x.Categorias)
-                .SingleOrDefault(x => x.Id == id);
+            return despesas.Include(x => x.Categorias).SingleOrDefault(x => x.Id == id);
         }
 
         public List<Despesa> SelecionarTodos()

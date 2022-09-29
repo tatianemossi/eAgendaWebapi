@@ -1,5 +1,4 @@
-﻿using eAgenda.Webapi.ViewModels.ModuloTarefa;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace eAgenda.Webapi.ViewModels.ModuloContato
 {

@@ -1,4 +1,4 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloDespesa;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -47,6 +47,5 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
         {
             return categorias.ToList();
         }
-
     }
 }

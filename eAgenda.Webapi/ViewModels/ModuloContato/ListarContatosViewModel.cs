@@ -11,6 +11,5 @@ namespace eAgenda.Webapi.ViewModels.ModuloContato
         public string Telefone { get; set; }
 
         public string Empresa { get; set; }
-
     }
 }

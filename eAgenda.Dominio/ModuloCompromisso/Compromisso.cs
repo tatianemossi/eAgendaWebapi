@@ -44,7 +44,6 @@ namespace eAgenda.Dominio.ModuloCompromisso
         }
 
         public string Link { get; set; }
-
         public DateTime Data { get { return _date.Date; } set { _date = value; } }
         public TimeSpan HoraInicio { get; set; }
         public TimeSpan HoraTermino { get; set; }

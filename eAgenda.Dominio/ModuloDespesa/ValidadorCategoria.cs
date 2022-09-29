@@ -6,9 +6,7 @@ namespace eAgenda.Dominio.ModuloDespesa
     {
         public ValidadorCategoria()
         {
-            RuleFor(x => x.Titulo)
-                .NotNull()
-                .NotEmpty();
+            RuleFor(x => x.Titulo).NotNull().NotEmpty();
         }
     }
 }

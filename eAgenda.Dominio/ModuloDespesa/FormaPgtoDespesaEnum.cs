@@ -13,5 +13,4 @@ namespace eAgenda.Dominio.ModuloDespesa
         [Description("Cartão de Crédito")]
         CartaoCredito = 2,
     }
-
 }

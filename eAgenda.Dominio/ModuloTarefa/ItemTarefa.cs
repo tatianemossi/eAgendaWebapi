@@ -7,7 +7,6 @@ namespace eAgenda.Dominio.ModuloTarefa
     [Serializable]
     public class ItemTarefa
     {
-
         public ItemTarefa()
         {
             Id = SequentialGuid.NewGuid();

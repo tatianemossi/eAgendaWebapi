@@ -1,5 +1,4 @@
 ﻿using eAgenda.Dominio.ModuloCompromisso;
-using eAgenda.Webapi.ViewModels.ModuloContato;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -24,6 +23,5 @@ namespace eAgenda.Webapi.ViewModels.ModuloCompromisso
         public TimeSpan HoraTermino { get; set; }
 
         public Guid ContatoId { get; set; }
-
     }
 }

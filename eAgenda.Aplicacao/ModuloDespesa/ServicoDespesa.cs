@@ -1,10 +1,9 @@
-﻿using eAgenda.Dominio;
+﻿using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.ModuloDespesa;
 using FluentResults;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using eAgenda.Dominio.Compartilhado;
 using System.Linq;
 
 namespace eAgenda.Aplicacao.ModuloDespesa

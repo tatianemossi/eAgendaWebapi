@@ -1,5 +1,4 @@
-﻿using eAgenda.Dominio.ModuloDespesa;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using eAgenda.Webapi.ViewModels.ModuloCategoria;
 
