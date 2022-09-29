@@ -4,29 +4,24 @@ using FluentResults;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using eAgenda.Dominio.Compartilhado;
+using System.Linq;
 
 namespace eAgenda.Aplicacao.ModuloDespesa
 {
     public class ServicoDespesa : ServicoBase<Despesa, ValidadorDespesa>
     {
         private IRepositorioDespesa repositorioDespesa;
+        private IRepositorioCategoria repositorioCategoria;
         private IContextoPersistencia contextoPersistencia;
 
         public ServicoDespesa(IRepositorioDespesa repositorioDespesa,
-                             IContextoPersistencia contexto)
+                             IContextoPersistencia contexto,
+                             IRepositorioCategoria repositorioCategoria)
         {
             this.repositorioDespesa = repositorioDespesa;
             this.contextoPersistencia = contexto;
-        }
-
-        public Result<Despesa> Inserir(Despesa despesa, List<Categoria> categorias)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Result<Despesa> Editar(Despesa despesa, List<Categoria> categorias1, List<Categoria> categorias2)
-        {
-            throw new NotImplementedException();
+            this.repositorioCategoria = repositorioCategoria;
         }
 
         public Result<Despesa> Inserir(Despesa despesa)
@@ -40,6 +35,12 @@ namespace eAgenda.Aplicacao.ModuloDespesa
 
             try
             {
+                var copiaListaCategoriasId = new List<Guid>(despesa.Categorias.Select(x => x.Id));
+
+                despesa.Categorias.Clear();
+
+                despesa.Categorias.AddRange(BuscarCategoriasRegistradas(copiaListaCategoriasId));
+
                 repositorioDespesa.Inserir(despesa);
 
                 contextoPersistencia.GravarDados();
@@ -58,6 +59,15 @@ namespace eAgenda.Aplicacao.ModuloDespesa
 
                 return Result.Fail(msgErro);
             }
+        }
+
+        private List<Categoria> BuscarCategoriasRegistradas(List<Guid> listaCategoriasId)
+        {
+            var categoriasRegistras = new List<Categoria>();
+            foreach (var categoriaId in listaCategoriasId)
+                categoriasRegistras.Add(repositorioCategoria.SelecionarPorId(categoriaId));
+
+            return categoriasRegistras;
         }
 
         public Result<Despesa> Editar(Despesa despesa)
