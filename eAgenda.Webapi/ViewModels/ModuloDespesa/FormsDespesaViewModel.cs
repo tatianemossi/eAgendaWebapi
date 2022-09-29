@@ -11,6 +11,7 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
         public string Descricao { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
+        [Range(0.1, double.MaxValue, ErrorMessage = "O valor deve ser maior que 0")]
         public decimal Valor { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
