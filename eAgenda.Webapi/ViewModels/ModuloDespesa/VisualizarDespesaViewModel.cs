@@ -18,7 +18,7 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
 
         public DateTime Data { get; set; }
 
-        public FormaPgtoDespesaEnum FormaPagamento { get; set; }
+        public string FormaPagamento { get; set; }
 
         public List<VisualizarCategoriaViewModel> Categorias { get; set; }
     }
