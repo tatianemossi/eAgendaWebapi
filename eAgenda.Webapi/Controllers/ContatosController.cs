@@ -5,9 +5,7 @@ using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Webapi.ViewModels.ModuloContato;
 using AutoMapper;
-using FluentResults;
 using Microsoft.AspNetCore.Authorization;
-using eAgenda.Dominio.ModuloAutenticacao;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -33,7 +31,11 @@ namespace eAgenda.Webapi.Controllers
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkComMap<List<Contato>, List<ListarContatosViewModel>>(contatoResult);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<List<ListarContatosViewModel>>(contatoResult.Value)
+            });
         }
 
         [HttpGet("visualizar-completo/{id:guid}")]
@@ -47,7 +49,11 @@ namespace eAgenda.Webapi.Controllers
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkComMap<Contato, VisualizarContatoViewModel>(contatoResult);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<VisualizarContatoViewModel>(contatoResult.Value)
+            });
         }
 
         [HttpPost]
@@ -62,7 +68,11 @@ namespace eAgenda.Webapi.Controllers
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkSemMap<FormsContatoViewModel>(contatoVM);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = contatoVM
+            });
         }
 
         [HttpPut("{id:guid}")]
@@ -80,7 +90,11 @@ namespace eAgenda.Webapi.Controllers
             if (contatoResult.IsFailed)
                 return InternalError(contatoResult);
 
-            return RetornarOkSemMap<FormsContatoViewModel>(contatoVM);
+            return Ok(new
+            {
+                sucesso = true,
+                dados = contatoVM
+            });
         }
 
         [HttpDelete("{id:guid}")]
@@ -96,26 +110,5 @@ namespace eAgenda.Webapi.Controllers
 
             return NoContent();
         }
-
-        #region Métodos Privados
-
-        public ActionResult RetornarOkComMap<TInput, TOutput>(Result<TInput> contatoResult)
-        {
-            return Ok(new
-            {
-                sucesso = true,
-                dados = mapeadorContatos.Map<TOutput>(contatoResult.Value)
-            });
-        }
-
-        public ActionResult RetornarOkSemMap<T>(Result<T> contatoResult)
-        {
-            return Ok(new
-            {
-                sucesso = true,
-                dados = contatoResult
-            });
-        }
-        #endregion
     }
 }

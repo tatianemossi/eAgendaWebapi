@@ -17,7 +17,9 @@ namespace eAgenda.Dominio.ModuloCompromisso
                    .NotNull()
                    .NotEmpty();
 
-            }).Otherwise(() =>
+            });
+            
+            When(x => x.TipoLocal == TipoLocalCompromissoEnum.Presencial,() =>
             {
 
                 RuleFor(x => x.Local)

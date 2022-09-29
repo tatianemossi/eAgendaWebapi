@@ -10,8 +10,8 @@ using eAgenda.Infra.Orm;
 namespace eAgenda.Infra.Orm.Migrations
 {
     [DbContext(typeof(eAgendaDbContext))]
-    [Migration("20220928192309_Alterando-Campo-Localizacao-Para-Local")]
-    partial class AlterandoCampoLocalizacaoParaLocal
+    [Migration("20220929144255_Adicionando-Configuracao")]
+    partial class AdicionandoConfiguracao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

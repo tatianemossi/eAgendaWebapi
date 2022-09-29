@@ -12,6 +12,9 @@ using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm.ModuloCompromisso;
 using eAgenda.Dominio.ModuloCompromisso;
 using eAgenda.Aplicacao.ModuloCompromisso;
+using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.Infra.Orm.ModuloDespesa;
+using eAgenda.Aplicacao.ModuloDespesa;
 
 namespace eAgenda.Webapi.Config
 {
@@ -33,6 +36,12 @@ namespace eAgenda.Webapi.Config
 
             services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoOrm>();
             services.AddTransient<ServicoCompromisso>();
+
+            services.AddScoped<IRepositorioDespesa, RepositorioDespesaOrm>();
+            services.AddTransient<ServicoDespesa>();
+
+            services.AddScoped<IRepositorioCategoria, RepositorioCategoriaOrm>();
+            services.AddTransient<ServicoCategoria>();
 
             services.AddTransient<ServicoAutenticacao>();
         }

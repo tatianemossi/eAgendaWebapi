@@ -91,6 +91,16 @@ namespace eAgenda.Aplicacao.ModuloDespesa
             return Result.Ok(despesa);
         }
 
+        public Result Excluir(Guid id)
+        {
+            var despesaResult = SelecionarPorId(id);
+
+            if (despesaResult.IsSuccess)
+                return Excluir(despesaResult.Value);
+
+            return Result.Fail(despesaResult.Errors);
+        }
+
         public Result Excluir(Despesa despesa)
         {
             Log.Logger.Debug("Tentando excluir despesa... {@d}", despesa);
@@ -112,6 +122,28 @@ namespace eAgenda.Aplicacao.ModuloDespesa
                 string msgErro = "Falha no sistema ao tentar excluir a Despesa";
 
                 Log.Logger.Error(ex, msgErro + " {DespesaId}", despesa.Id);
+
+                return Result.Fail(msgErro);
+            }
+        }
+
+        public Result<List<Despesa>> SelecionarTodosPeloUsuarioId(Guid usuarioId)
+        {
+            Log.Logger.Debug("Tentando selecionar despesas...");
+
+            try
+            {
+                var despesas = repositorioDespesa.SelecionarTodosPeloUsuarioId(usuarioId);
+
+                Log.Logger.Information("Despesas selecionadas com sucesso");
+
+                return Result.Ok(despesas);
+            }
+            catch (Exception ex)
+            {
+                string msgErro = "Falha no sistema ao tentar selecionar todas as Despesas";
+
+                Log.Logger.Error(ex, msgErro);
 
                 return Result.Fail(msgErro);
             }

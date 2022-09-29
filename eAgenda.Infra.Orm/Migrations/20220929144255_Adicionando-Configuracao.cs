@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eAgenda.Infra.Orm.Migrations
 {
-    public partial class ConfiguracaoIdentity : Migration
+    public partial class AdicionandoConfiguracao : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

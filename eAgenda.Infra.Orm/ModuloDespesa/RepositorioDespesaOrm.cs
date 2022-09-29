@@ -1,4 +1,5 @@
 ﻿using eAgenda.Dominio;
+using eAgenda.Dominio.ModuloCompromisso;
 using eAgenda.Dominio.ModuloDespesa;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -53,6 +54,11 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
         public List<Despesa> SelecionarTodos()
         {
             return despesas.ToList();
+        }
+
+        public List<Despesa> SelecionarTodosPeloUsuarioId(Guid usuarioId)
+        {
+            return despesas.Where(x => x.UsuarioId == usuarioId).Include(x => x.Categorias).ToList();
         }
     }
 }

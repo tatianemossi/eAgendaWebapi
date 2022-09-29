@@ -12,8 +12,9 @@ namespace eAgenda.Infra.Orm.ModuloCompromisso
 
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.Assunto).HasColumnType("varchar(300)").IsRequired();
-            builder.Property(x => x.Local).HasColumnType("varchar(300)").IsRequired(required: false);
-            builder.Property(x => x.Link).HasColumnType("varchar(1000)").IsRequired(required: false);
+            builder.Property(x => x.TipoLocal).HasColumnType("int").IsRequired();
+            builder.Property(x => x.Local).HasColumnType("varchar(300)");
+            builder.Property(x => x.Link).HasColumnType("varchar(1000)");
             builder.Property(x => x.Data).IsRequired();
             builder.Property(x => x.HoraInicio).HasColumnType("bigint").IsRequired();
             builder.Property(x => x.HoraTermino).HasColumnType("bigint").IsRequired();
