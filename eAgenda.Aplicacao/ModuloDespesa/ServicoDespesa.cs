@@ -80,6 +80,12 @@ namespace eAgenda.Aplicacao.ModuloDespesa
 
             try
             {
+                var copiaListaCategoriasId = new List<Guid>(despesa.Categorias.Select(x => x.Id));
+                
+                despesa.Categorias.Clear();
+
+                despesa.Categorias.AddRange(BuscarCategoriasRegistradas(copiaListaCategoriasId));
+
                 repositorioDespesa.Editar(despesa);
 
                 contextoPersistencia.GravarDados();

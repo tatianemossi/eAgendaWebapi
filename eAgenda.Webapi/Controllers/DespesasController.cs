@@ -79,6 +79,7 @@ namespace eAgenda.Webapi.Controllers
         public ActionResult<FormsDespesaViewModel> Editar(Guid id, FormsDespesaViewModel despesaVM)
         {
             var despesaResult = servicoDespesa.SelecionarPorId(id);
+            despesaResult.Value.Categorias.Clear();
 
             if (despesaResult.IsFailed && RegistroNaoEncontrado(despesaResult))
                 return NotFound(despesaResult);

@@ -4,6 +4,7 @@ using eAgenda.Dominio.ModuloDespesa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Webapi.ViewModels.ModuloCategoria;
 using eAgenda.Webapi.ViewModels.ModuloDespesa;
+using System.Linq;
 
 namespace eAgenda.Webapi.Config.AutoMapperConfig
 {
@@ -18,7 +19,10 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
                         return;
 
                     foreach (var categoriasId in viewModel.CategoriasId)
-                        despesa.Categorias.Add(new Categoria { Id = categoriasId });
+                    {
+                        if (!despesa.Categorias.Select(x => x.Id).Contains(categoriasId))
+                            despesa.Categorias.Add(new Categoria { Id = categoriasId });
+                    }
                 });
 
             CreateMap<Despesa, ListarDespesasViewModel>()
