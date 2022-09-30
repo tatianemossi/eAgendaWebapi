@@ -1,4 +1,5 @@
 ﻿using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.Webapi.ViewModels.ModuloCategoria;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,6 +24,6 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
         public FormaPgtoDespesaEnum FormaPagamento { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-        public List<Guid> CategoriasId { get; set; }
+        public List<CategoriaSelecionadaViewModel> CategoriasSelecionadas { get; set; }
     }
 }

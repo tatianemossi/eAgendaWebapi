@@ -14,25 +14,15 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
         {
             CreateMap<FormsDespesaViewModel, Despesa>()
                 .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>())
-                .AfterMap((viewModel, despesa) =>
-                {
-                    if (viewModel.CategoriasId == null)
-                        return;
-
-                    foreach (var categoriasId in viewModel.CategoriasId)
-                    {
-                        if (!despesa.Categorias.Select(x => x.Id).Contains(categoriasId))
-                            despesa.Categorias.Add(new Categoria { Id = categoriasId });
-                    }
-                });
+                .AfterMap<ConfigurarCategoriasMappingAction>();
 
             CreateMap<Despesa, ListarDespesasViewModel>()
                 .ForMember(destino => destino.FormaPagamento, opt => opt.MapFrom(origem => origem.FormaPagamento.GetDescription()));
 
             CreateMap<Despesa, VisualizarDespesaViewModel>()
-                .ForMember(destino => destino.FormaPagamento, opt => opt.MapFrom(origem => origem.FormaPagamento.GetDescription()));
-
-            CreateMap<Categoria, VisualizarCategoriaViewModel>();
+                .ForMember(destino => destino.FormaPagamento, opt => opt.MapFrom(origem => origem.FormaPagamento.GetDescription()))
+                .ForMember(destino => destino.Categorias, opt =>
+                    opt.MapFrom(origem => origem.Categorias.Select(x => x.Titulo)));
         }
     }
 }

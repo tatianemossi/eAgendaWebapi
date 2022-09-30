@@ -6,11 +6,6 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
 {
     public class VisualizarDespesaViewModel
     {
-        public VisualizarDespesaViewModel()
-        {
-            Categorias = new List<VisualizarCategoriaViewModel>();
-        }
-
         public string Descricao { get; set; }
 
         public decimal Valor { get; set; }
@@ -19,6 +14,6 @@ namespace eAgenda.Webapi.ViewModels.ModuloDespesa
 
         public string FormaPagamento { get; set; }
 
-        public List<VisualizarCategoriaViewModel> Categorias { get; set; }
+        public List<string> Categorias { get; set; }
     }
 }
