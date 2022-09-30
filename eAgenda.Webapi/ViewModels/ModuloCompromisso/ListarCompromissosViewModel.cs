@@ -11,6 +11,6 @@ namespace eAgenda.Webapi.ViewModels.ModuloCompromisso
 
         public string TipoLocal { get; set; }
 
-        public VisualizarContatoViewModel Contato { get; set; }
+        public string NomeContato { get; set; }
     }
 }

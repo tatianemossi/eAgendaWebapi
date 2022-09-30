@@ -38,7 +38,7 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
-        [HttpGet("visualizar-completa/{id:guid}")]
+        [HttpGet("vizualizacao-completa/{id:guid}")]
         public ActionResult<VisualizarCategoriaViewModel> SelecionarPorId(Guid id)
         {
             var categoriaResult = servicoCategoria.SelecionarPorId(id);
@@ -53,6 +53,24 @@ namespace eAgenda.Webapi.Controllers
             {
                 sucesso = true,
                 dados = mapeadorCategoria.Map<VisualizarCategoriaViewModel>(categoriaResult.Value)
+            });
+        }
+
+        [HttpGet("{id:guid}")]
+        public ActionResult<FormsCategoriaViewModel> SelecionarCategoriaPorId(Guid id)
+        {
+            var categoriaResult = servicoCategoria.SelecionarPorId(id);
+
+            if (categoriaResult.IsFailed && RegistroNaoEncontrado(categoriaResult))
+                return NotFound(categoriaResult);
+
+            if (categoriaResult.IsFailed)
+                return InternalError(categoriaResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorCategoria.Map<FormsCategoriaViewModel>(categoriaResult.Value)
             });
         }
 

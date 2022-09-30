@@ -5,11 +5,6 @@ namespace eAgenda.Webapi.ViewModels.ModuloCompromisso
 {
     public class VisualizarCompromissoViewModel
     {
-        public VisualizarCompromissoViewModel()
-        {
-            Contato = new VisualizarContatoViewModel();
-        }
-
         public string Assunto { get; set; }
 
         public string TipoLocal { get; set; }

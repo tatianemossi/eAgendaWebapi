@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eAgenda.Webapi.ViewModels.ModuloTarefa
 {
-    public class FormsTarefasViewModel
+    public class FormsTarefaViewModel
     {
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
         public string Titulo { get; set; }
@@ -17,7 +17,7 @@ namespace eAgenda.Webapi.ViewModels.ModuloTarefa
         public List<FormsItemTarefaViewModel> Itens { get; set; }
     }
 
-    public class InserirTarefaViewModel : FormsTarefasViewModel {}
+    public class InserirTarefaViewModel : FormsTarefaViewModel {}
 
-    public class EditarTarefaViewModel : FormsTarefasViewModel {}
+    public class EditarTarefaViewModel : FormsTarefaViewModel {}
 }

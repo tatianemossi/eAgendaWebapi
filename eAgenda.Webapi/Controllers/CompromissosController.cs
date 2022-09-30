@@ -40,7 +40,37 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
-        [HttpGet("visualizar-completo/{id:guid}")]
+        [HttpGet, Route("entre/{dataInicial:datetime}/{dataFinal:datetime}")]
+        public ActionResult<List<ListarCompromissosViewModel>> SelecionarCompromissosFuturos(DateTime dataInicial, DateTime dataFinal)
+        {
+            var compromissoResult = servicoCompromisso.SelecionarCompromissosFuturos(dataInicial, dataFinal);
+
+            if (compromissoResult.IsFailed)
+                return InternalError(compromissoResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorCompromissos.Map<List<ListarCompromissosViewModel>>(compromissoResult.Value)
+            });
+        }
+
+        [HttpGet, Route("passados/{dataAtual:datetime}")]
+        public ActionResult<List<ListarCompromissosViewModel>> SelecionarCompromissosPassados(DateTime dataAtual)
+        {
+            var compromissoResult = servicoCompromisso.SelecionarCompromissosPassados(dataAtual);
+
+            if (compromissoResult.IsFailed)
+                return InternalError(compromissoResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorCompromissos.Map<List<ListarCompromissosViewModel>>(compromissoResult.Value)
+            });
+        }
+
+        [HttpGet("vizualizacao-completa/{id:guid}")]
         public ActionResult<VisualizarCompromissoViewModel> SelecionarCompromissoCompletoPorId(Guid id)
         {
             var compromissoResult = servicoCompromisso.SelecionarPorId(id);
@@ -55,6 +85,24 @@ namespace eAgenda.Webapi.Controllers
             {
                 sucesso = true,
                 dados = mapeadorCompromissos.Map<VisualizarCompromissoViewModel>(compromissoResult.Value)
+            });
+        }
+
+        [HttpGet("{id:guid}")]
+        public ActionResult<FormsCompromissosViewModel> SelecionarCompromissoPorId(Guid id)
+        {
+            var compromissoResult = servicoCompromisso.SelecionarPorId(id);
+
+            if (compromissoResult.IsFailed && RegistroNaoEncontrado(compromissoResult))
+                return NotFound(compromissoResult);
+
+            if (compromissoResult.IsFailed)
+                return InternalError(compromissoResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorCompromissos.Map<FormsCompromissosViewModel>(compromissoResult.Value)
             });
         }
 

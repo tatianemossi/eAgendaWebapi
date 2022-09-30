@@ -38,7 +38,7 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
-        [HttpGet("visualizar-completa/{id:guid}")]
+        [HttpGet("vizualizacao-completa/{id:guid}")]
         public ActionResult<VisualizarTarefaViewModel> SelecionarTarefaCompletaPorId(Guid id)
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
@@ -56,8 +56,26 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
+        [HttpGet("{id:guid}")]
+        public ActionResult<FormsTarefaViewModel> SelecionarTarefaPorId(Guid id)
+        {
+            var tarefaResult = servicoTarefa.SelecionarPorId(id);
+
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
+                return NotFound(tarefaResult);
+
+            if (tarefaResult.IsFailed)
+                return InternalError(tarefaResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<FormsTarefaViewModel>(tarefaResult.Value)
+            });
+        }
+
         [HttpPost]
-        public ActionResult<FormsTarefasViewModel> Inserir(InserirTarefaViewModel tarefaVM)
+        public ActionResult<FormsTarefaViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
@@ -74,7 +92,7 @@ namespace eAgenda.Webapi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public ActionResult<FormsTarefasViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
+        public ActionResult<FormsTarefaViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
 
