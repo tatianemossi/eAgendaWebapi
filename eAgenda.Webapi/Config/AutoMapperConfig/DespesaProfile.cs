@@ -13,6 +13,7 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
         public DespesaProfile()
         {
             CreateMap<FormsDespesaViewModel, Despesa>()
+                .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>())
                 .AfterMap((viewModel, despesa) =>
                 {
                     if (viewModel.CategoriasId == null)

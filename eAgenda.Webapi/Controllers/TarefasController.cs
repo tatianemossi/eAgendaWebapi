@@ -60,8 +60,6 @@ namespace eAgenda.Webapi.Controllers
         public ActionResult<FormsTarefasViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
-            
-            tarefa.UsuarioId = UsuarioLogado.Id;
 
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 

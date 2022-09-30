@@ -11,7 +11,8 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
     {
         public CompromissoProfile()
         {
-            CreateMap<FormsCompromissosViewModel, Compromisso>();
+            CreateMap<FormsCompromissosViewModel, Compromisso>()
+                .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>());
 
             CreateMap<Compromisso, ListarCompromissosViewModel>()
                 .ForMember(destino => destino.TipoLocal, opt => opt.MapFrom(origem => origem.TipoLocal.GetDescription()));

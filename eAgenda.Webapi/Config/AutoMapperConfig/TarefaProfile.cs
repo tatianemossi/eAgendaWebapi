@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using eAgenda.Dominio.Compartilhado;
+using eAgenda.Dominio.ModuloAutenticacao;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Webapi.ViewModels.ModuloTarefa;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Security.Claims;
 
 namespace eAgenda.Webapi.Config.AutoMapperConfig
 {
@@ -16,6 +20,7 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
         private void ConverterDeViewModelParaEntidade()
         {
             CreateMap<InserirTarefaViewModel, Tarefa>()
+                .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>())
                 .ForMember(destino => destino.Itens, opt => opt.Ignore())
                 .AfterMap((viewModel, tarefa) =>
                 {

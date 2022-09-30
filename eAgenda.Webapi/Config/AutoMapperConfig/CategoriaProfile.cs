@@ -8,7 +8,8 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
     {
         public CategoriaProfile()
         {
-            CreateMap<FormsCategoriaViewModel, Categoria>();
+            CreateMap<FormsCategoriaViewModel, Categoria>()
+                .ForMember(destino => destino.UsuarioId, opt => opt.MapFrom<UsuarioResolver>());
 
             CreateMap<Categoria, ListarCategoriaViewModel>();
             CreateMap<Categoria, VisualizarCategoriaViewModel>();
